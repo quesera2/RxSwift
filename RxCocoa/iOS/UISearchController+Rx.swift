@@ -53,7 +53,22 @@
                 .methodInvoked( #selector(UISearchControllerDelegate.willPresentSearchController(_:)))
                 .map {_ in}
         }
+    }
+
+    @available(iOS 8.0, tvOS 9.0, *)
+    extension Reactive where Base: UISearchController {
         
+        /// Reactive wrapper for `searchResultsUpdater`.
+        /// For more information take a look at `DelegateProxyType` protocol documentation.
+        public var searchResultsUpdater: DelegateProxy<UISearchController, UISearchResultsUpdating> {
+            return RxSearchResultsUpdatingProxy.proxy(for: base)
+        }
+        
+        /// Reactive wrapper for `searchResultsUpdater` message.
+        public var updateSearchResults: ControlEvent<UISearchController> {
+            let source = RxSearchResultsUpdatingProxy.proxy(for: base).didUpdateSearchResultSubject
+            return ControlEvent(events: source)
+        }
     }
     
 #endif

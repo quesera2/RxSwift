@@ -80,6 +80,12 @@ extension DelegateProxyTest {
         performDelegateTest(UISearchControllerSubclass()) { ExtendSearchControllerDelegateProxy(searchControllerSubclass: $0) }
     }
 }
+
+extension DelegateProxyTest {
+    func test_UISearchResultsUpdatingExtension() {
+        performDelegateTest(UISearchControllerSubclass2()) { ExtendSearchResultsUpdatingProxy(searchControllerSubclass: $0) }
+    }
+}
     
 extension DelegateProxyTest {
     func test_UIPickerViewExtension() {
@@ -405,6 +411,29 @@ final class UISearchControllerSubclass
     }
 }
 
+final class ExtendSearchResultsUpdatingProxy
+    : RxSearchResultsUpdatingProxy
+    , TestDelegateProtocol {
+    init(searchControllerSubclass: UISearchControllerSubclass2) {
+        super.init(searchController: searchControllerSubclass)
+    }
+}
+
+final class UISearchControllerSubclass2
+    : UISearchController
+    , TestDelegateControl {
+    func doThatTest(_ value: Int) {
+        (searchResultsUpdater as! TestDelegateProtocol).testEventHappened?(value)
+    }
+    
+    var delegateProxy: DelegateProxy<UISearchController, UISearchResultsUpdating> {
+        return self.rx.searchResultsUpdater
+    }
+    
+    func setMineForwardDelegate(_ testDelegate: UISearchResultsUpdating) -> Disposable {
+        return RxSearchResultsUpdatingProxy.installForwardDelegate(testDelegate, retainDelegate: false, onProxyForObject: self)
+    }
+}
 
 final class ExtendPickerViewDelegateProxy
     : RxPickerViewDelegateProxy

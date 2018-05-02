@@ -115,6 +115,25 @@ final class UISearchController_RxTests: RxTest {
         XCTAssertTrue(willPresent)
     }
     
+    func testUpdateSearchResults() {
+        var completed = false
+        var updated = false
+        
+        autoreleasepool {
+            let searchController = UISearchController()
+            
+            _ = searchController.rx.updateSearchResults
+                .subscribe(onNext: { searchController in
+                    updated = true
+                }, onCompleted: {
+                    completed = true
+                })
+            searchController.searchResultsUpdater!.updateSearchResults(for: searchController)
+        }
+        
+        XCTAssertTrue(completed)
+        XCTAssertTrue(updated)
+    }
 }
 
 #endif
