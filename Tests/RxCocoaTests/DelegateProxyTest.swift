@@ -733,6 +733,7 @@ extension MockTestDelegateProtocol
     , UITableViewDelegate
     , UISearchBarDelegate
     , UISearchControllerDelegate
+    , UISearchResultsUpdating
     , UINavigationControllerDelegate
     , UITabBarControllerDelegate
     , UITabBarDelegate
@@ -759,6 +760,10 @@ extension MockTestDelegateProtocol
     }
 
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        fatalError()
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
         fatalError()
     }
 }
